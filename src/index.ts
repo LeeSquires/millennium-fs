@@ -12,11 +12,16 @@ loader.load().then(() => {
     zoom: 8,
   });
 
+  const directionsService = new google.maps.DirectionsService();
+  const directionsRenderer = new google.maps.DirectionsRenderer();
+
+  directionsRenderer.setMap(map);
+
   const form = document.getElementById('get-quote-form') as HTMLFormElement;
 
-  // add autocomplete to the pick-up and deliver to fields
+  // set pickup and delivery fields
   const pickup = document.getElementById('direct-from') as HTMLInputElement;
-  const deliver = document.getElementById('direct-to') as HTMLInputElement;
+  const delivery = document.getElementById('direct-to') as HTMLInputElement;
 
   const options = {
     fields: ['geometry', 'place_id'],
@@ -24,17 +29,28 @@ loader.load().then(() => {
     componentRestrictions: { country: 'gb' },
   };
 
+  // add autocomplete to the pick-up and deliver to fields
   const pickupAutocomplete = new google.maps.places.Autocomplete(pickup, options);
-  const deliveryAutocomplete = new google.maps.places.Autocomplete(deliver, options);
+  const deliveryAutocomplete = new google.maps.places.Autocomplete(delivery, options);
 
   // Check when form is submitted
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     e.stopPropagation();
 
+    // Add autocomplete to form inputs
     const pickupPlace = pickupAutocomplete.getPlace();
     const deliveryPlace = deliveryAutocomplete.getPlace();
 
+    // Stop user from submitting request without autocomplete
+    if (!pickupPlace) {
+      window.alert('Please select a pick-up location from the dropdown list.');
+    } else if (!deliveryPlace) {
+      window.alert('Please select a delivery location from the dropdown list.');
+      return;
+    }
+
+    // Get distance using form input autocompletes
     const service = new google.maps.DistanceMatrixService();
     service.getDistanceMatrix(
       {
@@ -47,7 +63,7 @@ loader.load().then(() => {
     );
 
     function callback(response, status) {
-      if (status == 'OK') {
+      if (status === 'OK') {
         const origins = response.originAddresses;
         const destinations = response.destinationAddresses;
 
@@ -56,9 +72,6 @@ loader.load().then(() => {
           for (let j = 0; j < results.length; j++) {
             const element = results[j];
             const distance = element.distance.text;
-            const duration = element.duration.text;
-            const from = origins[i];
-            const to = destinations[j];
 
             const result = document.getElementById('distance') as HTMLElement;
             result.innerHTML = 'Distance: ' + distance;
@@ -66,5 +79,20 @@ loader.load().then(() => {
         }
       }
     }
+
+    directionsService.route(
+      {
+        origin: { placeId: pickupPlace.place_id },
+        destination: { placeId: deliveryPlace.place_id },
+        travelMode: 'DRIVING',
+      },
+      (response, status) => {
+        if (status === 'OK') {
+          directionsRenderer.setDirections(response);
+        } else {
+          window.alert('Directions request failed due to ' + status);
+        }
+      }
+    );
   });
 });
