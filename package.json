@@ -40,6 +40,7 @@
     "@finsweet/eslint-config": "^2.0.2",
     "@finsweet/tsconfig": "^1.2.0",
     "@playwright/test": "^1.31.1",
+    "@types/google.maps": "^3.52.0",
     "@typescript-eslint/eslint-plugin": "^5.53.0",
     "@typescript-eslint/parser": "^5.53.0",
     "cross-env": "^7.0.3",
@@ -52,6 +53,7 @@
     "typescript": "^4.9.5"
   },
   "dependencies": {
-    "@finsweet/ts-utils": "^0.38.0"
+    "@finsweet/ts-utils": "^0.38.0",
+    "@googlemaps/js-api-loader": "^1.15.1"
   }
 }
