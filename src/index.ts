@@ -8,7 +8,7 @@ const loader = new Loader({
 
 loader.load().then(() => {
   const map = new google.maps.Map(document.getElementById('map-target') as HTMLElement, {
-    center: { lat: -34.397, lng: 150.644 },
+    center: { lat: 51.6842869, lng: -4.1673871 },
     zoom: 8,
   });
 
@@ -75,6 +75,8 @@ loader.load().then(() => {
 
             const result = document.getElementById('distance') as HTMLElement;
             result.innerHTML = 'Distance: ' + distance;
+
+            console.log(prices[1]);
           }
         }
       }
