@@ -1,0 +1,5 @@
+[
+    { "VanType": "Small", "PriceValue": 1.35 },
+    { "VanType": "Large", "PriceValue": 1.45 },
+    { "VanType": "Extra Large", "PriceValue": 1.65 }
+]

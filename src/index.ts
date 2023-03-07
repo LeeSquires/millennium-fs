@@ -1,5 +1,7 @@
 import { Loader } from '@googlemaps/js-api-loader';
 
+import prices from './utils/prices.json';
+
 const loader = new Loader({
   apiKey: 'AIzaSyBSgmItIIkt7rADqH3GMEwVkAledYFipzw',
   version: 'weekly',
@@ -17,8 +19,6 @@ loader.load().then(() => {
 
   directionsRenderer.setMap(map);
 
-  const form = document.getElementById('get-quote-form') as HTMLFormElement;
-
   // set pickup and delivery fields
   const pickup = document.getElementById('direct-from') as HTMLInputElement;
   const delivery = document.getElementById('direct-to') as HTMLInputElement;
@@ -32,6 +32,8 @@ loader.load().then(() => {
   // add autocomplete to the pick-up and deliver to fields
   const pickupAutocomplete = new google.maps.places.Autocomplete(pickup, options);
   const deliveryAutocomplete = new google.maps.places.Autocomplete(delivery, options);
+
+  const form = document.getElementById('get-quote-form') as HTMLFormElement;
 
   // Check when form is submitted
   form.addEventListener('submit', (e) => {
@@ -65,7 +67,6 @@ loader.load().then(() => {
     function callback(response, status) {
       if (status === 'OK') {
         const origins = response.originAddresses;
-        const destinations = response.destinationAddresses;
 
         for (let i = 0; i < origins.length; i++) {
           const results = response.rows[i].elements;

@@ -6,6 +6,6 @@
     "paths": {
       "$utils/*": ["src/utils/*"]
     },
-    "types": ["@finsweet/ts-utils", "google.maps", "express", "node"]    
+    "types": ["@finsweet/ts-utils", "google.maps"]    
   }
 }
