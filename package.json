@@ -29,8 +29,6 @@
     "lint:fix": "eslint --ignore-path .gitignore ./src --fix",
     "check": "tsc --noEmit",
     "format": "prettier --write ./src",
-    "test": "playwright test",
-    "test:headed": "playwright test --headed",
     "release": "changeset publish",
     "update": "pnpm update -i -L -r"
   },
@@ -39,7 +37,6 @@
     "@changesets/cli": "^2.26.0",
     "@finsweet/eslint-config": "^2.0.2",
     "@finsweet/tsconfig": "^1.2.0",
-    "@playwright/test": "^1.31.1",
     "@types/google.maps": "^3.52.0",
     "@typescript-eslint/eslint-plugin": "^5.53.0",
     "@typescript-eslint/parser": "^5.53.0",
