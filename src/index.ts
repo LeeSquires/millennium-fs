@@ -19,7 +19,7 @@ loader.load().then(() => {
 
   directionsRenderer.setMap(map);
 
-  // set pickup and delivery fields
+  // Set pickup and delivery fields
   const pickup = document.getElementById('direct-from') as HTMLInputElement;
   const delivery = document.getElementById('direct-to') as HTMLInputElement;
 
@@ -29,11 +29,47 @@ loader.load().then(() => {
     componentRestrictions: { country: 'gb' },
   };
 
-  // add autocomplete to the pick-up and deliver to fields
+  // Add autocomplete to the pick-up and deliver to fields
   const pickupAutocomplete = new google.maps.places.Autocomplete(pickup, options);
   const deliveryAutocomplete = new google.maps.places.Autocomplete(delivery, options);
 
   const form = document.getElementById('get-quote-form') as HTMLFormElement;
+
+  // Add event listeners to selector cards
+  const vanSmall = document.getElementById('van-small') as HTMLElement;
+  const vanLarge = document.getElementById('van-large') as HTMLElement;
+  const vanExtraLarge = document.getElementById('van-extra-large') as HTMLElement;
+
+  let vanSmallActive = false;
+  let vanLargeActive = false;
+  let vanExtraLargeActive = false;
+
+  vanSmall.addEventListener('click', (e) => {
+    if (!vanSmallActive) {
+      vanSmallActive = true;
+      vanLargeActive = false;
+      vanExtraLargeActive = false;
+      console.log('small van active');
+    }
+  });
+
+  vanLarge.addEventListener('click', (e) => {
+    if (!vanLargeActive) {
+      vanLargeActive = true;
+      vanSmallActive = false;
+      vanExtraLargeActive = false;
+      console.log('medium van active');
+    }
+  });
+
+  vanExtraLarge.addEventListener('click', (e) => {
+    if (!vanExtraLargeActive) {
+      vanExtraLargeActive = true;
+      vanSmallActive = false;
+      vanLargeActive = false;
+      console.log('large van active');
+    }
+  });
 
   // Check when form is submitted
   form.addEventListener('submit', (e) => {
@@ -72,12 +108,30 @@ loader.load().then(() => {
           const results = response.rows[i].elements;
           for (let j = 0; j < results.length; j++) {
             const element = results[j];
-            const distance = element.distance.text;
+            const distance = parseFloat(element.distance.text);
 
-            const result = document.getElementById('distance') as HTMLElement;
-            result.innerHTML = 'Distance: ' + distance;
+            let quoteResult;
 
-            console.log(prices[1]);
+            const currencyFormat = {
+              style: 'currency',
+              currency: 'GBP',
+            };
+
+            if (vanSmallActive) {
+              quoteResult = prices[0].PriceValue * distance;
+            } else if (vanLargeActive) {
+              quoteResult = prices[1].PriceValue * distance;
+            } else if (vanExtraLargeActive) {
+              quoteResult = prices[2].PriceValue * distance;
+            }
+
+            const formatQuote = quoteResult.toLocaleString('en-GB', currencyFormat);
+
+            const result = document.getElementById('quote-result') as HTMLElement;
+            result.innerHTML = formatQuote;
+
+            const quoteContainer = document.getElementById('quote-container') as HTMLElement;
+            quoteContainer.classList.remove('hide');
           }
         }
       }
