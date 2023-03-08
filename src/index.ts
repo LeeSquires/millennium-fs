@@ -127,6 +127,7 @@ loader.load().then(() => {
 
             const formatQuote = quoteResult.toLocaleString('en-GB', currencyFormat);
 
+            // write quote result to DOM
             const result = document.getElementById('quote-result') as HTMLElement;
             result.innerHTML = formatQuote;
 
