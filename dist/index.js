@@ -277,9 +277,12 @@
 
   // src/utils/prices.json
   var prices_default = [
-    { VanType: "Small", PriceValue: 1.35 },
-    { VanType: "Large", PriceValue: 1.45 },
-    { VanType: "Extra Large", PriceValue: 1.65 }
+    { VanType: "Small - Connect", PriceValue: 1.35 },
+    { VanType: "Medium - Transit Custom", PriceValue: 1.47 },
+    { VanType: "Large - Transit", PriceValue: 1.47 },
+    { VanType: "X Large - Sprinter", PriceValue: 1.55 },
+    { VanType: "XX Large - Luton", PriceValue: 1.65 },
+    { VanType: "XXX Large - 7.5 Tonne", PriceValue: 2 }
   ];
 
   // src/index.ts
@@ -290,6 +293,7 @@
   });
   loader.load().then(() => {
     const map = new google.maps.Map(document.getElementById("map-target"), {
+      mapId: "1fc4dbcdc8793781",
       center: { lat: 51.6842869, lng: -4.1673871 },
       zoom: 8
     });
@@ -305,39 +309,36 @@
     };
     const pickupAutocomplete = new google.maps.places.Autocomplete(pickup, options);
     const deliveryAutocomplete = new google.maps.places.Autocomplete(delivery, options);
-    const form = document.getElementById("get-quote-form");
-    const vanSmall = document.getElementById("van-small");
-    const vanLarge = document.getElementById("van-large");
-    const vanExtraLarge = document.getElementById("van-extra-large");
-    let vanSmallActive = false;
-    let vanLargeActive = false;
-    let vanExtraLargeActive = false;
-    vanSmall.addEventListener("click", (e) => {
-      if (!vanSmallActive) {
-        vanSmallActive = true;
-        vanLargeActive = false;
-        vanExtraLargeActive = false;
-        console.log("small van active");
+    const datePicker = document.getElementById("date-picker");
+    const dateInput = document.getElementById("date");
+    let dateSelected;
+    datePicker.addEventListener("change", () => {
+      const dateFormatted = new Date(datePicker.value).toLocaleDateString("en-GB");
+      dateInput.value = dateFormatted;
+      dateSelected = dateFormatted;
+    });
+    const vanSizes = [
+      "van-small",
+      "van-medium",
+      "van-large",
+      "van-x-large",
+      "van-xx-large",
+      "van-xxx-large"
+    ];
+    let vanSizeActive = null;
+    function handleClick(vanSize) {
+      if (vanSizeActive !== vanSize) {
+        vanSizeActive = vanSize;
+      }
+    }
+    vanSizes.forEach((vanSize) => {
+      const element = document.getElementById(vanSize);
+      if (element) {
+        element.addEventListener("click", () => handleClick(vanSize));
       }
     });
-    vanLarge.addEventListener("click", (e) => {
-      if (!vanLargeActive) {
-        vanLargeActive = true;
-        vanSmallActive = false;
-        vanExtraLargeActive = false;
-        console.log("medium van active");
-      }
-    });
-    vanExtraLarge.addEventListener("click", (e) => {
-      if (!vanExtraLargeActive) {
-        vanExtraLargeActive = true;
-        vanSmallActive = false;
-        vanLargeActive = false;
-        console.log("large van active");
-      }
-    });
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
+    const quoteButton = document.getElementById("get-quote-button");
+    quoteButton.addEventListener("click", (e) => {
       e.stopPropagation();
       const pickupPlace = pickupAutocomplete.getPlace();
       const deliveryPlace = deliveryAutocomplete.getPlace();
@@ -345,6 +346,14 @@
         window.alert("Please select a pick-up location from the dropdown list.");
       } else if (!deliveryPlace) {
         window.alert("Please select a delivery location from the dropdown list.");
+        return;
+      }
+      if (!dateSelected) {
+        window.alert("Please enter a date");
+        return;
+      }
+      if (vanSizeActive === null) {
+        window.alert("Please select a van size");
         return;
       }
       const service = new google.maps.DistanceMatrixService();
@@ -370,18 +379,33 @@
                 style: "currency",
                 currency: "GBP"
               };
-              if (vanSmallActive) {
-                quoteResult = prices_default[0].PriceValue * distance;
-              } else if (vanLargeActive) {
-                quoteResult = prices_default[1].PriceValue * distance;
-              } else if (vanExtraLargeActive) {
-                quoteResult = prices_default[2].PriceValue * distance;
+              const sizeIndex = vanSizes.indexOf(vanSizeActive);
+              if (sizeIndex !== -1) {
+                quoteResult = prices_default[sizeIndex].PriceValue * distance;
+              }
+              if ((distance2) => 200) {
+                quoteResult = quoteResult * 0.9;
               }
               const formatQuote = quoteResult.toLocaleString("en-GB", currencyFormat);
               const result = document.getElementById("quote-result");
-              result.innerHTML = formatQuote;
-              const quoteContainer = document.getElementById("quote-container");
-              quoteContainer.classList.remove("hide");
+              const valueInput = document.getElementById("quote-value");
+              const vanSizeInput = document.getElementById("van-size");
+              const quoteWrapper = document.getElementById("quote-wrapper");
+              const quotePickup = document.getElementById("quote-pickup");
+              const quoteDelivery = document.getElementById("quote-delivery");
+              const quoteDistance = document.getElementById("quote-distance");
+              const quoteVehicle = document.getElementById("quote-vehicle");
+              const quoteDate = document.getElementById("quote-date");
+              result.innerHTML = `<b>Estimated Cost:</b> </br>${formatQuote}`;
+              valueInput.value = formatQuote;
+              quoteDate.innerHTML = `<b>Date:</b> </br>${dateSelected}`;
+              quoteDistance.innerHTML = `<b>Distance:</b> </br>${distance} miles`;
+              quotePickup.innerHTML = `<b>Pickup Location:</b> </br>${pickup.value}`;
+              quoteDelivery.innerHTML = `<b>Delivery Location:</b> </br>${delivery.value}`;
+              quoteVehicle.innerHTML = `<b>Vehicle:</b> </br>${prices_default[sizeIndex].VanType}`;
+              vanSizeInput.value = prices_default[sizeIndex].VanType;
+              quoteWrapper.classList.remove("hide");
+              quoteWrapper.scrollIntoView({ behavior: "smooth" });
             }
           }
         }

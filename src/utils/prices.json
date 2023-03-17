@@ -1,5 +1,8 @@
 [
-    { "VanType": "Small", "PriceValue": 1.35 },
-    { "VanType": "Large", "PriceValue": 1.45 },
-    { "VanType": "Extra Large", "PriceValue": 1.65 }
+    { "VanType": "Small - Connect", "PriceValue": 1.35 },
+    { "VanType": "Medium - Transit Custom", "PriceValue": 1.47 },
+    { "VanType": "Large - Transit", "PriceValue": 1.47 },
+    { "VanType": "X Large - Sprinter", "PriceValue": 1.55 },
+    { "VanType": "XX Large - Luton", "PriceValue": 1.65 },
+    { "VanType": "XXX Large - 7.5 Tonne", "PriceValue": 2.00 }
 ]

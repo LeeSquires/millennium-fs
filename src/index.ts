@@ -10,6 +10,7 @@ const loader = new Loader({
 
 loader.load().then(() => {
   const map = new google.maps.Map(document.getElementById('map-target') as HTMLElement, {
+    mapId: '1fc4dbcdc8793781',
     center: { lat: 51.6842869, lng: -4.1673871 },
     zoom: 8,
   });
@@ -33,47 +34,53 @@ loader.load().then(() => {
   const pickupAutocomplete = new google.maps.places.Autocomplete(pickup, options);
   const deliveryAutocomplete = new google.maps.places.Autocomplete(delivery, options);
 
-  const form = document.getElementById('get-quote-form') as HTMLFormElement;
+  // Copy input from date picker to webflow form input
+  const datePicker = document.getElementById('date-picker') as HTMLInputElement;
+  const dateInput = document.getElementById('date') as HTMLInputElement;
+  let dateSelected;
+  datePicker.addEventListener('change', () => {
+    const dateFormatted = new Date(datePicker.value).toLocaleDateString('en-GB');
+    dateInput.value = dateFormatted;
+    dateSelected = dateFormatted;
+  });
 
-  // Add event listeners to selector cards
-  const vanSmall = document.getElementById('van-small') as HTMLElement;
-  const vanLarge = document.getElementById('van-large') as HTMLElement;
-  const vanExtraLarge = document.getElementById('van-extra-large') as HTMLElement;
+  type VanSize =
+    | 'van-small'
+    | 'van-medium'
+    | 'van-large'
+    | 'van-x-large'
+    | 'van-xx-large'
+    | 'van-xxx-large';
 
-  let vanSmallActive = false;
-  let vanLargeActive = false;
-  let vanExtraLargeActive = false;
+  const vanSizes: VanSize[] = [
+    'van-small',
+    'van-medium',
+    'van-large',
+    'van-x-large',
+    'van-xx-large',
+    'van-xxx-large',
+  ];
 
-  vanSmall.addEventListener('click', (e) => {
-    if (!vanSmallActive) {
-      vanSmallActive = true;
-      vanLargeActive = false;
-      vanExtraLargeActive = false;
-      console.log('small van active');
+  let vanSizeActive: VanSize | null = null;
+
+  function handleClick(vanSize: VanSize) {
+    if (vanSizeActive !== vanSize) {
+      vanSizeActive = vanSize;
+    }
+  }
+
+  vanSizes.forEach((vanSize) => {
+    const element = document.getElementById(vanSize);
+    if (element) {
+      element.addEventListener('click', () => handleClick(vanSize));
     }
   });
 
-  vanLarge.addEventListener('click', (e) => {
-    if (!vanLargeActive) {
-      vanLargeActive = true;
-      vanSmallActive = false;
-      vanExtraLargeActive = false;
-      console.log('medium van active');
-    }
-  });
-
-  vanExtraLarge.addEventListener('click', (e) => {
-    if (!vanExtraLargeActive) {
-      vanExtraLargeActive = true;
-      vanSmallActive = false;
-      vanLargeActive = false;
-      console.log('large van active');
-    }
-  });
+  const quoteButton = document.getElementById('get-quote-button') as HTMLButtonElement;
 
   // Check when form is submitted
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
+  quoteButton.addEventListener('click', (e) => {
+    // e.preventDefault();
     e.stopPropagation();
 
     // Add autocomplete to form inputs
@@ -85,6 +92,18 @@ loader.load().then(() => {
       window.alert('Please select a pick-up location from the dropdown list.');
     } else if (!deliveryPlace) {
       window.alert('Please select a delivery location from the dropdown list.');
+      return;
+    }
+
+    // Stop user from submitting request without date selected
+    if (!dateSelected) {
+      window.alert('Please enter a date');
+      return;
+    }
+
+    // Stop user from submitting request without van selected
+    if (vanSizeActive === null) {
+      window.alert('Please select a van size');
       return;
     }
 
@@ -117,22 +136,52 @@ loader.load().then(() => {
               currency: 'GBP',
             };
 
-            if (vanSmallActive) {
-              quoteResult = prices[0].PriceValue * distance;
-            } else if (vanLargeActive) {
-              quoteResult = prices[1].PriceValue * distance;
-            } else if (vanExtraLargeActive) {
-              quoteResult = prices[2].PriceValue * distance;
+            // determine selected van size and calculate price based on PriceValue * distance
+            const sizeIndex = vanSizes.indexOf(vanSizeActive);
+
+            if (sizeIndex !== -1) {
+              quoteResult = prices[sizeIndex].PriceValue * distance;
+            }
+
+            // apply 10% discount if over 200 miles
+            if ((distance) => 200) {
+              quoteResult = quoteResult * 0.9;
             }
 
             const formatQuote = quoteResult.toLocaleString('en-GB', currencyFormat);
 
-            // write quote result to DOM
+            // write quote results to DOM
             const result = document.getElementById('quote-result') as HTMLElement;
-            result.innerHTML = formatQuote;
+            const valueInput = document.getElementById('quote-value') as HTMLInputElement;
+            const vanSizeInput = document.getElementById('van-size') as HTMLInputElement;
+            const quoteWrapper = document.getElementById('quote-wrapper') as HTMLElement;
+            const quotePickup = document.getElementById('quote-pickup') as HTMLElement;
+            const quoteDelivery = document.getElementById('quote-delivery') as HTMLElement;
+            const quoteDistance = document.getElementById('quote-distance') as HTMLElement;
+            const quoteVehicle = document.getElementById('quote-vehicle') as HTMLElement;
+            const quoteDate = document.getElementById('quote-date') as HTMLElement;
 
-            const quoteContainer = document.getElementById('quote-container') as HTMLElement;
-            quoteContainer.classList.remove('hide');
+            // update quote result
+            result.innerHTML = `<b>Estimated Cost:</b> </br>${formatQuote}`;
+            valueInput.value = formatQuote;
+
+            // update date
+            quoteDate.innerHTML = `<b>Date:</b> </br>${dateSelected}`;
+
+            // update distance
+            quoteDistance.innerHTML = `<b>Distance:</b> </br>${distance} miles`;
+
+            // update pickup and delivery locations
+            quotePickup.innerHTML = `<b>Pickup Location:</b> </br>${pickup.value}`;
+            quoteDelivery.innerHTML = `<b>Delivery Location:</b> </br>${delivery.value}`;
+
+            // update van size
+            quoteVehicle.innerHTML = `<b>Vehicle:</b> </br>${prices[sizeIndex].VanType}`;
+            vanSizeInput.value = prices[sizeIndex].VanType;
+
+            // show quote wrapper
+            quoteWrapper.classList.remove('hide');
+            quoteWrapper.scrollIntoView({ behavior: 'smooth' });
           }
         }
       }
