@@ -277,12 +277,12 @@
 
   // src/utils/prices.json
   var prices_default = [
-    { VanType: "Small - Connect", PriceValue: 1.35 },
-    { VanType: "Medium - Transit Custom", PriceValue: 1.47 },
-    { VanType: "Large - Transit", PriceValue: 1.47 },
-    { VanType: "X Large - Sprinter", PriceValue: 1.55 },
-    { VanType: "XX Large - Luton", PriceValue: 1.65 },
-    { VanType: "XXX Large - 7.5 Tonne", PriceValue: 2 }
+    { VanType: "Small Van", PriceValue: 1.35 },
+    { VanType: "Short Wheel Base", PriceValue: 1.47 },
+    { VanType: "Long Wheel Base", PriceValue: 1.47 },
+    { VanType: "Extra Long Wheel Base", PriceValue: 1.55 },
+    { VanType: "Luton Van", PriceValue: 1.65 },
+    { VanType: "7.5 Tonne", PriceValue: 2 }
   ];
 
   // src/index.ts
