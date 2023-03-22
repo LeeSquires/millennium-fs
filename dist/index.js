@@ -281,8 +281,8 @@
     { VanType: "Short Wheel Base", PriceValue: 1.47 },
     { VanType: "Long Wheel Base", PriceValue: 1.47 },
     { VanType: "Extra Long Wheel Base", PriceValue: 1.55 },
-    { VanType: "Luton Van", PriceValue: 1.65 },
-    { VanType: "7.5 Tonne", PriceValue: 2 }
+    { VanType: "Luton Van", PriceValue: 1.9 },
+    { VanType: "7.5 Tonne", PriceValue: 2.5 }
   ];
 
   // src/index.ts
