@@ -144,7 +144,7 @@ loader.load().then(() => {
             }
 
             // apply 10% discount if over 200 miles
-            if ((routeDistance > 200) {
+            if (routeDistance > 200) {
               quoteResult = quoteResult * 0.9;
             }
 
