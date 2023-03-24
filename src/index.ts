@@ -143,6 +143,7 @@ loader.load().then(() => {
               quoteResult = prices[sizeIndex].PriceValue * routeDistance;
             }
 
+            // check calcs
             console.log(prices[sizeIndex].PriceValue);
             console.log(routeDistance);
 
