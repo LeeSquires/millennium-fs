@@ -127,7 +127,7 @@ loader.load().then(() => {
           const results = response.rows[i].elements;
           for (let j = 0; j < results.length; j++) {
             const element = results[j];
-            const distance = parseFloat(element.distance.text);
+            const routeDistance = parseFloat(element.distance.text);
 
             let quoteResult;
 
@@ -140,13 +140,11 @@ loader.load().then(() => {
             const sizeIndex = vanSizes.indexOf(vanSizeActive);
 
             if (sizeIndex !== -1) {
-              quoteResult = prices[sizeIndex].PriceValue * distance;
+              quoteResult = prices[sizeIndex].PriceValue * routeDistance;
             }
 
-            console.log(prices[sizeIndex].PriceValue * distance);
-
             // apply 10% discount if over 200 miles
-            if ((distance) => 200) {
+            if ((routeDistance > 200) {
               quoteResult = quoteResult * 0.9;
             }
 
@@ -171,7 +169,7 @@ loader.load().then(() => {
             quoteDate.innerHTML = `<b>Date:</b> </br>${dateSelected}`;
 
             // update distance
-            quoteDistance.innerHTML = `<b>Distance:</b> </br>${distance} miles`;
+            quoteDistance.innerHTML = `<b>Distance:</b> </br>${routeDistance} miles`;
 
             // update pickup and delivery locations
             quotePickup.innerHTML = `<b>Pickup Location:</b> </br>${pickup.value}`;
