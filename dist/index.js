@@ -383,7 +383,8 @@
               if (sizeIndex !== -1) {
                 quoteResult = prices_default[sizeIndex].PriceValue * distance;
               }
-              if ((distance2) => 200) {
+              console.log(rices_default[sizeIndex].PriceValue * distance);
+              if ((distance) => 200) {
                 quoteResult = quoteResult * 0.9;
               }
               const formatQuote = quoteResult.toLocaleString("en-GB", currencyFormat);
