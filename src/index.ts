@@ -143,6 +143,8 @@ loader.load().then(() => {
               quoteResult = prices[sizeIndex].PriceValue * distance;
             }
 
+            console.log(prices[sizeIndex].PriceValue * distance);
+
             // apply 10% discount if over 200 miles
             if ((distance) => 200) {
               quoteResult = quoteResult * 0.9;

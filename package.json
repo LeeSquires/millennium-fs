@@ -52,6 +52,7 @@
   "dependencies": {
     "@finsweet/ts-utils": "^0.38.0",
     "@googlemaps/js-api-loader": "^1.15.1",
+    "air-datepicker": "^3.3.5",
     "node": "^19.6.1"
   }
 }
