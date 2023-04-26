@@ -148,6 +148,11 @@ loader.load().then(() => {
               quoteResult = quoteResult * 0.9;
             }
 
+            // apply minimum charge of £50 if quote is below £50
+            if (quoteResult < 50) {
+              quoteResult = 50;
+            }
+
             const formatQuote = quoteResult.toLocaleString('en-GB', currencyFormat);
 
             // write quote results to DOM
